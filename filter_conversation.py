@@ -7,6 +7,20 @@ class Message:
     role: str
     content: str
 
+INPUT_FILE = 'conversation.txt'
+OUTPUT_FILE = 'filtered_conversation.txt'
+#OUTPUT_ROLE = 'Assistant'  #Change to 'Assistant' or 'User' to output other messages
+while True:
+    OUTPUT_ROLE = input("User or Assistant (user/assistant): ").strip().lower()
+    if OUTPUT_ROLE in ("u", "user"):
+        OUTPUT_ROLE = "User"
+        break
+    elif OUTPUT_ROLE in ("a", "assistant"):
+        OUTPUT_ROLE = "Assistant"
+        break
+    else:
+        print("Invalid input. Please enter 'user' or 'assistant' (or just 'u' or 'a').")
+
 class ConversationParser:
     def __init__(self, filepath: str):
         self.filepath = filepath
@@ -50,9 +64,6 @@ class MessageWriter:
         print(f"Filtered messages have been written to {self.output_filepath}")
 
 def main():
-    INPUT_FILE = 'conversation.txt'
-    OUTPUT_FILE = 'filtered_conversation.txt'
-    OUTPUT_ROLE = 'User'  #Change to 'Assistant' or 'User' to output other messages
     parser = ConversationParser(INPUT_FILE)
     try:
         content = parser.read_file()
