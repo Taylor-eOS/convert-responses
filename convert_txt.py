@@ -2,10 +2,11 @@ import os
 import html
 from dataclasses import dataclass
 from typing import List
+import settings
 
 @dataclass
 class Message:
-    role: str  #'User' or 'Assistant'
+    role: str
     content: str
 
 class ConversationParser:
@@ -13,7 +14,6 @@ class ConversationParser:
         self.filepath = filepath
         self.messages: List[Message] = []
 
-    #Reads the content of the conversation file.
     def read_file(self) -> str:
         if not os.path.exists(self.filepath):
             raise FileNotFoundError(f"The file {self.filepath} does not exist.")
@@ -21,28 +21,22 @@ class ConversationParser:
             content = file.read()
         return content
 
-    #Parses the conversation content into messages.
     def parse_content(self, content: str):
-        #Split the content by '---' with surrounding blank lines
         blocks = [block.strip() for block in content.split('---')]
-
         for block in blocks:
             if not block:
-                continue  #Skip empty blocks
+                continue
             lines = block.split('\n', 1)
             if len(lines) != 2:
                 print(f"Warning: Unexpected block format:\n{block}\n")
                 continue
             role_line, message = lines
-            role = role_line.strip().rstrip(':')  #Remove trailing colon
+            role = role_line.strip().rstrip(':')
             if role not in ['User', 'Assistant']:
                 print(f"Warning: Unknown role '{role}' in block:\n{block}\n")
                 continue
-            #Normalize line breaks and escape HTML characters
             message = html.escape(message.strip()).replace('\n', '<br>')
             self.messages.append(Message(role=role, content=message))
-
-    #Returns the list of parsed messages.
     def get_messages(self) -> List[Message]:
         return self.messages
 
@@ -51,16 +45,13 @@ class HTMLGenerator:
         self.messages = messages
         self.output_filepath = output_filepath
 
-    #Generates the HTML content and writes it to the output file.
     def generate_html(self):
         html_content = self.build_html()
         with open(self.output_filepath, 'w', encoding='utf-8') as file:
             file.write(html_content)
         print(f"HTML file has been generated at {self.output_filepath}")
 
-    #Builds the complete HTML structure.
     def build_html(self) -> str:
-        #Define the HTML structure with embedded CSS for styling
         html_structure = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -144,20 +135,11 @@ class HTMLGenerator:
 """
         return html_structure
 
-    #Builds the HTML for all messages.
     def build_messages(self) -> str:
         message_html = ""
         for msg in self.messages:
             role = msg.role.lower()
             avatar_letter = 'U' if msg.role == 'User' else 'A'
-        #    message_block = f"""
-        #<div class="message {role}">
-        #    <div class="avatar">{avatar_letter}</div>
-        #    <div class="content">
-        #        <strong>{msg.role}:</strong><br>
-        #        {msg.content}
-        #    </div>
-        #</div>"""
             message_block = f"""
         <div class="message {role}">
             <div class="content">
@@ -169,25 +151,19 @@ class HTMLGenerator:
         return message_html
 
 def main():
-    input_filepath = 'conversation.txt'
-    output_filepath = 'conversation.html'
-
-    #Parse the conversation file
+    input_filepath = settings.INPUT_FILE
+    output_filepath = os.path.splitext(input_filepath)[0] + '.html'
     parser = ConversationParser(input_filepath)
     try:
         content = parser.read_file()
     except FileNotFoundError as e:
         print(e)
         return
-
     parser.parse_content(content)
     messages = parser.get_messages()
-
     if not messages:
         print("No valid messages found in the conversation file.")
         return
-
-    #Generate the HTML file
     generator = HTMLGenerator(messages, output_filepath)
     generator.generate_html()
 

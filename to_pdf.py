@@ -115,9 +115,9 @@ class PDFGenerator:
         return message_html
 
 def main():
-    INPUT_FILE = settings.INPUT_FILE
-    OUTPUT_FILE = OUTPUT_FILE = os.path.splitext(INPUT_FILE)[0] + '.pdf'
-    parser = ConversationParser(INPUT_FILE)
+    input_file = settings.INPUT_FILE
+    output_file = os.path.splitext(input_file)[0] + '.pdf'
+    parser = ConversationParser(input_file)
     try:
         content = parser.read_file()
     except FileNotFoundError as e:
