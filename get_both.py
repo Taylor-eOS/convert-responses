@@ -2,6 +2,8 @@ import os
 import sys
 from dataclasses import dataclass
 from typing import List
+import settings
+
 try:
     import pysbd
 except Exception:
@@ -9,8 +11,8 @@ except Exception:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "pysbd"])
     import pysbd
 
-INPUT_FILE = 'conversation.txt'
-OUTPUT_FILE = 'filtered_conversation.txt'
+INPUT_FILE = settings.INPUT_FILE
+OUTPUT_FILE = settings.OUTPUT_FILE
 
 @dataclass
 class Message:

@@ -1,15 +1,17 @@
 import os
 from dataclasses import dataclass
 from typing import List
+import settings
 
 @dataclass
 class Message:
     role: str
     content: str
 
-INPUT_FILE = 'conversation.txt'
-OUTPUT_FILE = 'filtered_conversation.txt'
-#OUTPUT_ROLE = 'Assistant'  #Change to 'Assistant' or 'User' to output other messages
+INPUT_FILE = settings.INPUT_FILE
+OUTPUT_FILE = settings.OUTPUT_FILE
+#OUTPUT_ROLE = 'Assistant'
+
 while True:
     OUTPUT_ROLE = input("User or Assistant (user/assistant): ").strip().lower()
     if OUTPUT_ROLE in ("u", "user"):

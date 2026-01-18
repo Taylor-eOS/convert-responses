@@ -3,6 +3,7 @@ import html
 from dataclasses import dataclass
 from typing import List
 from weasyprint import HTML
+import settings
 
 @dataclass
 class Message:
@@ -114,8 +115,8 @@ class PDFGenerator:
         return message_html
 
 def main():
-    INPUT_FILE = 'conversation.txt'
-    OUTPUT_FILE = 'conversation.pdf'
+    INPUT_FILE = settings.INPUT_FILE
+    OUTPUT_FILE = OUTPUT_FILE = os.path.splitext(INPUT_FILE)[0] + '.pdf'
     parser = ConversationParser(INPUT_FILE)
     try:
         content = parser.read_file()
